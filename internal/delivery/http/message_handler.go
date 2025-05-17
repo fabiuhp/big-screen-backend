@@ -19,7 +19,7 @@ func NewMessageHandler(router *mux.Router, useCase domain.MessageUseCase) {
 
 	router.HandleFunc("/api/messages", handler.GetAll).Methods("GET")
 	router.HandleFunc("/api/messages", handler.Create).Methods("POST")
-	router.HandleFunc("/api/messages/delete", handler.DeleteMessage).Methods("POST")
+	router.HandleFunc("/api/messages/{id}", handler.Delete).Methods("DELETE")
 }
 
 func (h *MessageHandler) GetAll(w http.ResponseWriter, r *http.Request) {
@@ -64,22 +64,11 @@ func (h *MessageHandler) Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func (h *MessageHandler) DeleteMessage(w http.ResponseWriter, r *http.Request) {
-	var request struct {
-		ID string `json:"id"`
-	}
+func (h *MessageHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
 
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, "ID inválido", http.StatusBadRequest)
-		return
-	}
-
-	if request.ID == "" {
-		http.Error(w, "ID é obrigatório", http.StatusBadRequest)
-		return
-	}
-
-	if err := h.messageUseCase.Delete(request.ID); err != nil {
+	if err := h.messageUseCase.Delete(id); err != nil {
 		if err.Error() == "sql: no rows in result set" {
 			http.Error(w, "Mensagem não encontrada", http.StatusNotFound)
 			return
