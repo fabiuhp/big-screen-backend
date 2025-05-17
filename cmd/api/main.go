@@ -17,12 +17,12 @@ import (
 )
 
 func main() {
-	// Configuração do banco de dados
-	dbHost := getEnv("DB_HOST", "localhost")
-	dbPort := getEnv("DB_PORT", "5432")
-	dbUser := getEnv("DB_USER", "postgres")
-	dbPass := getEnv("DB_PASS", "postgres")
-	dbName := getEnv("DB_NAME", "sw_criciuma")
+	// Configuração do banco de dados com valores fixos
+	dbHost := "dpg-d0kb1pje5dus73bkqod0-a.oregon-postgres.render.com"
+	dbPort := "5432"
+	dbUser := "admin"
+	dbPass := "3aVE6WBIYYJhNQldafl4wH9k6DLpiuI1"
+	dbName := "swdb_4fav"
 
 	// Log das variáveis de ambiente (sem a senha)
 	log.Printf("Configuração do banco de dados:")
@@ -86,7 +86,7 @@ func main() {
 	httpHandler.NewMessageHandler(router, messageUseCase)
 
 	// Configuração do servidor
-	port := getEnv("PORT", "8080")
+	port := "8080"
 	log.Printf("Servidor iniciado na porta %s", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
