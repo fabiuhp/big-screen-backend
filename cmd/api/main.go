@@ -19,7 +19,7 @@ import (
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Permite todas as origens
-		w.Header().Set("Access-Control-Allow-Origin", "https://swcriciuma.synapsee.com.br")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		// Permite os métodos HTTP
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
 		// Permite os headers
