@@ -16,6 +16,25 @@ import (
 	_ "github.com/lib/pq"
 )
 
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Permite todas as origens
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		// Permite os métodos HTTP
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		// Permite os headers
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		// Responde imediatamente para requisições OPTIONS
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	// Configuração do banco de dados com valores fixos
 	dbHost := "dpg-d0kb1pje5dus73bkqod0-a.oregon-postgres.render.com"
@@ -83,6 +102,10 @@ func main() {
 
 	// Configuração do router
 	router := mux.NewRouter()
+
+	// Aplica o middleware CORS
+	router.Use(corsMiddleware)
+
 	httpHandler.NewMessageHandler(router, messageUseCase)
 
 	// Configuração do servidor
