@@ -1,4 +1,4 @@
- package postgres
+package postgres
 
 import (
 	"database/sql"
@@ -54,4 +54,4 @@ func (r *messageRepository) GetAll() ([]domain.Message, error) {
 	}
 
 	return messages, nil
-} 
+}

@@ -1,11 +1,11 @@
- package http
+package http
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/abiopereira/sw-criciuma/internal/domain"
+	"github.com/gorilla/mux"
 )
 
 type MessageHandler struct {
@@ -61,4 +61,4 @@ func (h *MessageHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(response)
-} 
+}

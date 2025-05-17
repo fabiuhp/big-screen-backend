@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	httpHandler "github.com/abiopereira/sw-criciuma/internal/delivery/http"
 	"github.com/abiopereira/sw-criciuma/internal/repository/postgres"
@@ -22,14 +23,45 @@ func main() {
 	dbPass := getEnv("DB_PASS", "postgres")
 	dbName := getEnv("DB_NAME", "sw_criciuma")
 
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
 		dbHost, dbPort, dbUser, dbPass, dbName)
 
-	db, err := sql.Open("postgres", connStr)
+	log.Printf("Tentando conectar ao banco de dados em: %s", dbHost)
+
+	// Tenta conectar ao banco de dados com retry
+	var db *sql.DB
+	var err error
+	maxRetries := 5
+	for i := 0; i < maxRetries; i++ {
+		db, err = sql.Open("postgres", connStr)
+		if err != nil {
+			log.Printf("Tentativa %d: Erro ao conectar ao banco de dados: %v", i+1, err)
+			time.Sleep(5 * time.Second)
+			continue
+		}
+
+		// Testa a conexão
+		err = db.Ping()
+		if err != nil {
+			log.Printf("Tentativa %d: Erro ao fazer ping no banco de dados: %v", i+1, err)
+			db.Close()
+			time.Sleep(5 * time.Second)
+			continue
+		}
+
+		log.Printf("Conexão com o banco de dados estabelecida com sucesso!")
+		break
+	}
+
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Não foi possível conectar ao banco de dados após várias tentativas")
 	}
 	defer db.Close()
+
+	// Configura o pool de conexões
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(25)
+	db.SetConnMaxLifetime(5 * time.Minute)
 
 	// Inicialização das dependências
 	messageRepo := postgres.NewMessageRepository(db)
