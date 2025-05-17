@@ -21,9 +21,13 @@ func corsMiddleware(next http.Handler) http.Handler {
 		// Permite todas as origens
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		// Permite os métodos HTTP
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
 		// Permite os headers
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		// Permite credenciais
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		// Cache das configurações de CORS por 1 hora
+		w.Header().Set("Access-Control-Max-Age", "3600")
 
 		// Responde imediatamente para requisições OPTIONS
 		if r.Method == "OPTIONS" {
