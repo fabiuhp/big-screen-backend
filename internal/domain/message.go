@@ -13,9 +13,11 @@ type Message struct {
 type MessageRepository interface {
 	Create(message *Message) error
 	GetAll() ([]Message, error)
+	Delete(id string) error
 }
 
 type MessageUseCase interface {
 	Create(message *Message) error
 	GetAll() ([]Message, error)
+	Delete(id string) error
 }

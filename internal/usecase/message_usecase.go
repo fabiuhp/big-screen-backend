@@ -36,3 +36,10 @@ func (uc *messageUseCase) Create(message *domain.Message) error {
 func (uc *messageUseCase) GetAll() ([]domain.Message, error) {
 	return uc.messageRepo.GetAll()
 }
+
+func (uc *messageUseCase) Delete(id string) error {
+	if id == "" {
+		return errors.New("id cannot be empty")
+	}
+	return uc.messageRepo.Delete(id)
+}

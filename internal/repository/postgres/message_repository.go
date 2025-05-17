@@ -55,3 +55,26 @@ func (r *messageRepository) GetAll() ([]domain.Message, error) {
 
 	return messages, nil
 }
+
+func (r *messageRepository) Delete(id string) error {
+	query := `
+		DELETE FROM messages
+		WHERE id = $1
+	`
+
+	result, err := r.db.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}

@@ -19,6 +19,7 @@ func NewMessageHandler(router *mux.Router, useCase domain.MessageUseCase) {
 
 	router.HandleFunc("/api/messages", handler.GetAll).Methods("GET")
 	router.HandleFunc("/api/messages", handler.Create).Methods("POST")
+	router.HandleFunc("/api/messages/{id}", handler.Delete).Methods("DELETE")
 }
 
 func (h *MessageHandler) GetAll(w http.ResponseWriter, r *http.Request) {
@@ -60,5 +61,28 @@ func (h *MessageHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(response)
+}
+
+func (h *MessageHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	if err := h.messageUseCase.Delete(id); err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			http.Error(w, "Mensagem não encontrada", http.StatusNotFound)
+			return
+		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := struct {
+		Message string `json:"message"`
+	}{
+		Message: "Mensagem removida com sucesso",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
