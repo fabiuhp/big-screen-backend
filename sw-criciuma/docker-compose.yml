@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=dpg-d0kb1pje5dus73bkqod0-a
+      - DB_PORT=5432
+      - DB_USER=admin
+      - DB_PASS=3aVE6WBIYYJhNQldafl4wH9k6DLpiuI1
+      - DB_NAME=swdb_4fav
+      - PORT=8080
+    depends_on:
+      - postgres
+    networks:
+      - sw-network
+
+  postgres:
+    image: postgres:12-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=3aVE6WBIYYJhNQldafl4wH9k6DLpiuI1
+      - POSTGRES_DB=swdb_4fav
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    networks:
+      - sw-network
+
+volumes:
+  postgres_data:
+
+networks:
+  sw-network:
+    driver: bridge 
