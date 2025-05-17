@@ -19,13 +19,13 @@ import (
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Permite todas as origens
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", "https://swcriciuma.synapsee.com.br")
 		// Permite os métodos HTTP
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
 		// Permite os headers
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, Origin")
 		// Permite credenciais
-		w.Header().Set("Access-Control-Allow-Credentials", "false")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		// Cache das configurações de CORS por 1 hora
 		w.Header().Set("Access-Control-Max-Age", "3600")
 
