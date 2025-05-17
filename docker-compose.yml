@@ -16,6 +16,12 @@ services:
       - postgres
     networks:
       - sw-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:8080/api/messages"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   postgres:
     image: postgres:12-alpine
