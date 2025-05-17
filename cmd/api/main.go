@@ -1,4 +1,4 @@
- package main
+package main
 
 import (
 	"database/sql"
@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gorilla/mux"
-	"github.com/abiopereira/sw-criciuma/internal/delivery/http"
+	httpHandler "github.com/abiopereira/sw-criciuma/internal/delivery/http"
 	"github.com/abiopereira/sw-criciuma/internal/repository/postgres"
 	"github.com/abiopereira/sw-criciuma/internal/usecase"
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
@@ -37,7 +37,7 @@ func main() {
 
 	// Configuração do router
 	router := mux.NewRouter()
-	http.NewMessageHandler(router, messageUseCase)
+	httpHandler.NewMessageHandler(router, messageUseCase)
 
 	// Configuração do servidor
 	port := getEnv("PORT", "8080")
@@ -51,4 +51,4 @@ func getEnv(key, defaultValue string) string {
 		return defaultValue
 	}
 	return value
-} 
+}

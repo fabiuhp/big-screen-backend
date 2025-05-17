@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine
+FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
 
@@ -16,7 +16,16 @@ RUN go mod download
 COPY . .
 
 # Compila a aplicação
-RUN go build -o main ./cmd/api
+RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/api
+
+# Imagem final
+FROM alpine:latest
+
+WORKDIR /app
+
+# Copia o binário compilado
+COPY --from=builder /app/main .
+COPY --from=builder /app/migrations ./migrations
 
 # Expõe a porta da aplicação
 EXPOSE 8080
